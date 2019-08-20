@@ -1,0 +1,21 @@
+version: '3.1'
+
+services:
+  test1:
+    command:
+      - /bin/sh
+      - -c
+      - |
+        cron
+        rm -rf tmp/pids
+        bundle exec rake db:migrate
+        bundle exec rails s -p ${RAILS_PORT} -b ${RAILS_BIND}
+    env_file:
+      - '.env'
+    ports:
+      - "${RAILS_PORT}:${RAILS_PORT}"
+
+networks:
+  default:
+    external:
+      name: tcc_default
