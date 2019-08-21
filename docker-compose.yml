@@ -1,19 +1,20 @@
-version: '3.1'
+version: '3'
 
 services:
-  test1:
-    command:
-      - /bin/sh
-      - -c
-      - |
-        cron
-        rm -rf tmp/pids
-        bundle exec rake db:migrate
-        bundle exec rails s -p ${RAILS_PORT} -b ${RAILS_BIND}
-    env_file:
-      - '.env'
+  db:
+    image: postgres
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+  web:
+    build: .
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    volumes:
+      - .:/myapp
     ports:
-      - "${RAILS_PORT}:${RAILS_PORT}"
+      - "3000:3000"
+    depends_on:
+      - db
+
 
 networks:
   default:
